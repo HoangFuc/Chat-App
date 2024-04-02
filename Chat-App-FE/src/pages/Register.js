@@ -3,7 +3,7 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
+//import { ToastContainer, toast } from 'react-toastify';
 import { Helmet } from 'react-helmet';
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -15,24 +15,22 @@ export default function Register() {
     e.preventDefault();
     // if (password !== confirmPassword) {
     //   // Mật khẩu không khớp, yêu cầu người dùng nhập lại
-    //   alert("Mật khẩu không khớp. Vui lòng nhập lại.");
-    //   setPassword("");
-    //   setConfirmPassword("");
+    //   alert('Mật khẩu không khớp. Vui lòng nhập lại.');
+    //   setPassword('');
+    //   setConfirmPassword('');
     //   return;
     // }
 
-    //   try {
-    //     const response = await axios.post('/api/signup', {
+    try {
+      const response = await axios.post('/api/signup', {
+        email,
+        password,
+      });
 
-    //       email,
-    //       password,
-    //     });
-
-    //     console.log(response.data);
-    //   } catch (error) {
-    //       console.error(error);
-    //   }
-    toast.success('Đăng nhập thành công');
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <div>
@@ -82,11 +80,11 @@ export default function Register() {
           </div>
         </div>
       </div>
-      <ToastContainer
+      {/* <ToastContainer
         position="bottom-center"
         limit={1}
         style={{ width: '500px' }}
-      />
+      /> */}
     </div>
   );
 }

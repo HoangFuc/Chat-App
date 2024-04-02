@@ -1,14 +1,14 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcrypt');
 
-const userModel = require("../models/users");
+const userModel = require('../models/users');
 
 exports.signup = async (req, res) => {
   const { password, isAdmin, email } = req.body;
   const checkEmail = await userModel.findOne({
     email: email,
   });
-  if (checkEmail.length > 0) {
-    res.status(500).json("Email da ton tai");
+  if (checkEmail) {
+    res.status(500).json('Email da ton tai');
   }
   try {
     const salt = await bcrypt.genSalt(10);
@@ -33,9 +33,9 @@ exports.signin = async (req, res) => {
     });
     const validate = await bcrypt.compare(password, data.password);
     return validate === true
-      ? res.status(200).json("Ban dang nhap thanh cong")
-      : res.status(400).json("Sai thong tin ! Moi ban nhap lai ");
+      ? res.status(200).json('Ban dang nhap thanh cong')
+      : res.status(400).json('Sai thong tin ! Moi ban nhap lai ');
   } catch (err) {
-    console.log("[ERR] :", err);
+    console.log('[ERR] :', err);
   }
 };

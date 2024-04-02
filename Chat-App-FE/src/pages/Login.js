@@ -5,26 +5,25 @@ import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import { Helmet } from 'react-helmet';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // const [isShowPassword, setIsShowPassword] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // try {
-    //   const response = await axios.post('/api/signin', {
-    //     email,
-    //     password,
-    //   });
-    //   console.log(response.data);
-    //   toast.success('Đăng nhập thành công');
-    // } catch (error) {
-    //   toast.error('Đăng nhập thất bại');
-    // }
-    toast.success('Đăng nhập thành công');
+    try {
+      const response = await axios.post('/api/signin', {
+        email,
+        password,
+      });
+      console.log(response.data);
+      toast.success('Đăng nhập thành công');
+    } catch (error) {
+      toast.error('Đăng nhập thất bại');
+    }
   };
   // const handleForgotPass = async (e) => {
   //   if (!email) {
