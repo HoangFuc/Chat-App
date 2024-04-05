@@ -2,15 +2,28 @@ const bcrypt = require("bcrypt");
 
 const userModel = require("../models/users");
 
+const characters =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+function generateString(length) {
+  let result = " ";
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  return result;
+}
+
 exports.signup = async (req, res) => {
   console.log("===[SIGNUP]");
-  const { password, isAdmin, email } = req.body;
+  const { password, isAdmin, email, avatar } = req.body;
   try {
     const checkEmail = await userModel.findOne({
       email: email,
     });
     if (checkEmail) {
-      return res.status(500).json("Email da ton tai");
+      return res.status(500).json("Email đã tồn tại");
     } else {
       const salt = await bcrypt.genSalt(10);
       const hashed = await bcrypt.hash(password, salt);
@@ -18,10 +31,11 @@ exports.signup = async (req, res) => {
         email: email,
         password: hashed,
         isAdmin: isAdmin,
+        code: generateString(6),
+        username: `user${generateString(4)}`,
+        avatar: avatar || "../assets/picture/defaultAva.jpg",
       });
-      console.log("=a");
       const data = await userModel.create(newUser);
-      console.log("==b");
       return data
         ? res.status(200).json(data)
         : res.status(500).json("Hệ thống bị gián đoạn. Vui lòng thử lại");
