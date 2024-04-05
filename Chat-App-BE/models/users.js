@@ -15,6 +15,15 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    username: {
+      type: String,
+    },
+    code: {
+      type: String,
+    },
+    avatar: {
+      type: String,
+    },
   },
   {
     timestamps: true,
