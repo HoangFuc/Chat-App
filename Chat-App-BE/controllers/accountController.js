@@ -25,3 +25,31 @@ exports.editName = async (req, res) => {
     res.status(404).json("Đổi tên thất bại !");
   }
 };
+
+exports.findUser = async (req, res) => {
+  const { username } = req.body;
+  try {
+    const user = await userModel.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ message: "User isn't valid" });
+    }
+    return res.status(200).json(user);
+  } catch (err) {
+    console.log("[ERR] : ", err);
+    res.status(500).json(err);
+  }
+};
+
+exports.findUserById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await userModel.findById({ _id: id });
+    if (!user) {
+      return res.status(400).json({ message: "Khong tim thay user" });
+    }
+    return res.status(200).json(user);
+  } catch (err) {
+    console.log("[ERR] : ", err);
+    res.status(500).json(err);
+  }
+};
