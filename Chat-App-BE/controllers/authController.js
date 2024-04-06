@@ -60,3 +60,29 @@ exports.signin = async (req, res) => {
     console.log("[ERR] :", err);
   }
 };
+
+exports.resetPassword = async (req, res) => {
+  const { email, code, newPassword, reTypePassword } = req.body;
+  const user = await userModel.findOne({
+    email,
+  });
+
+  if (user) {
+    if (user?.code === code) {
+      if (newPassword === reTypePassword) {
+        const salt = await bcrypt.genSalt(10);
+        const hashed = await bcrypt.hash(newPassword, salt);
+        const newCode = generateString(6);
+        const newUser = await user.updateOne({
+          password: hashed,
+          code: newCode.trim(),
+        });
+        res.status(200).json(newUser);
+      } else res.status(404).json("Mật khẩu nhập lại không khớp");
+    } else {
+      res.status(404).json("Sai mã xác thực");
+    }
+  } else {
+    res.status(404).json("inValid");
+  }
+};
