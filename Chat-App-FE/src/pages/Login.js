@@ -14,17 +14,17 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // try {
-    //   const response = await axios.post('/api/signin', {
-    //     email,
-    //     password,
-    //   });
-    //   console.log(response.data);
-    //   toast.success('Đăng nhập thành công');
-    // } catch (error) {
-    //   toast.error('Đăng nhập thất bại');
-    // }
-    toast.success('Đăng nhập thành công');
+    try {
+      const response = await axios.post('/api/signin', {
+        email,
+        password,
+      });
+      console.log(response.data);
+      toast.success('Đăng nhập thành công');
+      navigate('/messages');
+    } catch (error) {
+      toast.error('Đăng nhập thất bại');
+    }
   };
   // const handleForgotPass = async (e) => {
   //   if (!email) {
@@ -34,8 +34,9 @@ export default function Login() {
   //   } else {
   //     toast.success(
   //       'Chúng tôi đã gửi link reset password vào tài khoản email của bạn'
-  //navigate('/register');
   //     );
+
+  //     navigate('/register');
   //   }
   // };
   return (
@@ -54,6 +55,7 @@ export default function Login() {
                 placeholder="Enter email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </Form.Group>
 
@@ -64,6 +66,7 @@ export default function Login() {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
               <div>
                 {/* <a onClick={handleForgotPass}>Forget Password?</a> */}
