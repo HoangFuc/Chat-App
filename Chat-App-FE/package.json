@@ -1,6 +1,6 @@
 {
   "name": "chat-app-fe",
-  "proxy": "http://localhost:7070",
+  "proxy": "https://chat-app-23.onrender.com",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
