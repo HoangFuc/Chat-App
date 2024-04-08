@@ -5,12 +5,12 @@ import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import { Helmet } from 'react-helmet';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // const [isShowPassword, setIsShowPassword] = useState(false);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -21,6 +21,7 @@ export default function Login() {
       });
       console.log(response.data);
       toast.success('Đăng nhập thành công');
+      navigate('/messages');
     } catch (error) {
       toast.error('Đăng nhập thất bại');
     }
@@ -33,8 +34,9 @@ export default function Login() {
   //   } else {
   //     toast.success(
   //       'Chúng tôi đã gửi link reset password vào tài khoản email của bạn'
-  //navigate('/register');
   //     );
+
+  //     navigate('/register');
   //   }
   // };
   return (
@@ -53,6 +55,7 @@ export default function Login() {
                 placeholder="Enter email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </Form.Group>
 
@@ -63,6 +66,7 @@ export default function Login() {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
               <div>
                 {/* <a onClick={handleForgotPass}>Forget Password?</a> */}

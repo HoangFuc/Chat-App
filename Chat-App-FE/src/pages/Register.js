@@ -76,7 +76,7 @@ export default function Register() {
 
           <div className="text">
             {' '}
-            <a href="/login"> Already have an account</a>
+            <a href="/"> Already have an account</a>
           </div>
         </div>
       </div>
