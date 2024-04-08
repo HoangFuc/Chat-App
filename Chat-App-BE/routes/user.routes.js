@@ -3,7 +3,7 @@ const router = express.Router();
 const {getUser} = require('../controllers/userController');
 
 // Định nghĩa tuyến đường API danh sách người dùng
-router.get('/listAccount', async (req, res) => {
+router.get('api/listAccount', async (req, res) => {
   try {
     const users = await getUser.find();
     res.json(users);
