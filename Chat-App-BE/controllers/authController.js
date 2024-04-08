@@ -2,15 +2,37 @@ const bcrypt = require('bcrypt');
 
 const userModel = require('../models/users');
 
+const characters =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+function generateString(length) {
+  let result = " ";
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  return result;
+}
+
 exports.signup = async (req, res) => {
-  console.log('===[SIGNUP]');
+<<<<<<< HEAD
+  console.log('===[SIGNUP]');z
   const { password, isAdmin, email } = req.body;
+=======
+  console.log("===[SIGNUP]");
+  const { password, isAdmin, email, avatar } = req.body;
+>>>>>>> a8a5ad5dfcdd608735cf5d19b9536b738ecde100
   try {
     const checkEmail = await userModel.findOne({
       email: email,
     });
     if (checkEmail) {
+<<<<<<< HEAD
       return res.status(500).json('Email da ton tai');
+=======
+      return res.status(500).json("Email đã tồn tại");
+>>>>>>> a8a5ad5dfcdd608735cf5d19b9536b738ecde100
     } else {
       const salt = await bcrypt.genSalt(10);
       const hashed = await bcrypt.hash(password, salt);
@@ -18,10 +40,17 @@ exports.signup = async (req, res) => {
         email: email,
         password: hashed,
         isAdmin: isAdmin,
+        code: generateString(6),
+        username: `user${generateString(4)}`,
+        avatar: avatar || "../assets/picture/defaultAva.jpg",
       });
+<<<<<<< HEAD
       console.log('=a');
       const data = await userModel.create(newUser);
       console.log('==b');
+=======
+      const data = await userModel.create(newUser);
+>>>>>>> a8a5ad5dfcdd608735cf5d19b9536b738ecde100
       return data
         ? res.status(200).json(data)
         : res.status(500).json('Hệ thống bị gián đoạn. Vui lòng thử lại');
@@ -44,5 +73,31 @@ exports.signin = async (req, res) => {
       : res.status(400).json('Sai thong tin ! Moi ban nhap lai ');
   } catch (err) {
     console.log('[ERR] :', err);
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const { email, code, newPassword, reTypePassword } = req.body;
+  const user = await userModel.findOne({
+    email,
+  });
+
+  if (user) {
+    if (user?.code === code) {
+      if (newPassword === reTypePassword) {
+        const salt = await bcrypt.genSalt(10);
+        const hashed = await bcrypt.hash(newPassword, salt);
+        const newCode = generateString(6);
+        const newUser = await user.updateOne({
+          password: hashed,
+          code: newCode.trim(),
+        });
+        res.status(200).json(newUser);
+      } else res.status(404).json("Mật khẩu nhập lại không khớp");
+    } else {
+      res.status(404).json("Sai mã xác thực");
+    }
+  } else {
+    res.status(404).json("inValid");
   }
 };

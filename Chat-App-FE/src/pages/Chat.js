@@ -1,31 +1,61 @@
 import React, { useState } from 'react';
 import './Chat.css';
-import { Container, Row, Col, ListGroup, Card, Form, Button } from 'react-bootstrap';
+import axios from 'axios';
+import { Container, Row, Col, ListGroup, Card, Form, Button, Nav, Navbar } from 'react-bootstrap';
 
 function App() {
-  const [selectedGroup, setSelectedGroup] = useState(null);
-  const [groups, setGroups] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState('My Cloud');
+  const [groups, setGroups] = useState(['My Cloud']);
   const [newGroup, setNewGroup] = useState('');
-  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState({});
   const [chatMessages, setChatMessages] = useState([]);
+  const [showTaskbar, setShowTaskbar] = useState(false);
 
   const handleGroupSelection = (group) => {
     setSelectedGroup(group);
   };
 
-  const handleCreateGroup = () => {
-    if (newGroup) {
-      setGroups([...groups, newGroup]);
+   const handleCreateGroup = () => {
+    if (newGroup && !groups.includes(newGroup)) {
+      setGroups((prevGroups) => [...prevGroups.slice(0, 1), newGroup, ...prevGroups.slice(1)]);
+      setMessages({ ...messages, [newGroup]: [] });
       setNewGroup('');
     }
   };
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (message) {
-      setChatMessages([...chatMessages, message]);
-      setMessage('');
+    if (chatMessages) {
+      const updatedMessages = { ...messages };
+      if (Array.isArray(updatedMessages[selectedGroup])) {
+        updatedMessages[selectedGroup] = [...updatedMessages[selectedGroup], chatMessages];
+      } else {
+        updatedMessages[selectedGroup] = [chatMessages];
+      }
+      setMessages(updatedMessages);
+      setChatMessages('');
+      const chatBody = document.querySelector('.chat-body');
+      chatBody.scrollTop = chatBody.scrollHeight;
     }
+  };
+
+   const handleClick = () => {
+    setShowTaskbar(!showTaskbar);
+  };
+
+  // const handleDeleteMessage = (index) => {
+  //   const updatedMessages = { ...messages };
+  //   updatedMessages[selectedGroup].splice(index, 1);
+  //   setMessages(updatedMessages);
+  // };
+
+  const handleDeleteGroup = () => {
+    const updatedGroups = groups.filter((group) => group !== selectedGroup);
+    setGroups(updatedGroups);
+    const updatedMessages = { ...messages };
+    delete updatedMessages[selectedGroup];
+    setMessages(updatedMessages);
+    setSelectedGroup(updatedGroups[0]); 
   };
 
   return (
@@ -37,8 +67,23 @@ function App() {
             <Card>
               <Card.Body className="d-flex flex-column">
                 <div className="user-info">
-                  <img src="user-avatar.jpg" alt="User Avatar" className="avatar" />
+                  <img src="user-avatar.jpg" alt="User Avatar" className="avatar" onClick={handleClick}/>
                   <h5>User Name</h5>
+                  <div className={`taskbar${showTaskbar ? " active" : ""}`}>
+                    <Navbar bg="light" expand="lg">
+                      <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                      <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="mr-auto" style={{ flexDirection: "column" }}>
+                          <Nav.Link href="#account">Account</Nav.Link>
+                          <Nav.Link href="#setting">Setting</Nav.Link>
+                          <Nav.Link href="#account">Logout</Nav.Link>
+                        </Nav>
+                      </Navbar.Collapse>
+                    </Navbar>
+                    <div className="close-btn" onClick={handleClick}>
+                      X
+                    </div>
+                  </div>
                 </div>
                 <ListGroup className="flex-grow">
                   {groups.map((group, index) => (
@@ -72,15 +117,34 @@ function App() {
             </Card>
           </Col>
           <Col md={8}>
+            {/* Right section */}
+            
             {selectedGroup && (
               <Card>
+                <div className="d-flex justify-content-between align-items-center">
+                  <Form.Control
+                    type="text"
+                    placeholder="Search"
+                    
+                  />
+                  <Button variant="outline-secondary">Find</Button>
+                </div>
                 <Card.Header>
-                  <h4>{selectedGroup}</h4>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h4>{selectedGroup}</h4>
+                    {selectedGroup !== 'My Cloud' && (
+                      <Button variant="danger" onClick={handleDeleteGroup}>
+                        Out Group
+                      </Button>
+                    )}
+                  </div>
                 </Card.Header>
                 <Card.Body className="chat-body d-flex flex-column">
                   <div className="chat-messages">
-                    {chatMessages.map((msg, index) => (
-                      <p key={index}>{msg}</p>
+                    {messages[selectedGroup]?.map((msg, index) => (
+                      <div key={index} className="message">
+                        <p>{msg}</p>
+                      </div>
                     ))}
                   </div>
                   <div className="mt-auto">
@@ -88,9 +152,9 @@ function App() {
                       <Form.Group className="d-flex">
                         <Form.Control 
                           type="text"
-                          placeholder="Type your message..."
-                          value={message}
-                          onChange={(e) => setMessage(e.target.value)}
+                          placeholder=""
+                          value={chatMessages}
+                          onChange={(e) => setChatMessages(e.target.value)}
                           className="flex-grow-1"
                         />
                         <Button variant="primary" type="submit">Send</Button>
