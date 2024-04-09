@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import _ from 'lodash';
+
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,26 +32,11 @@ export default function Login() {
       toast.error('Đăng nhập thất bại');
     }
   };
-  const handleForgotPass = async (e) => {
-    try {
-      if (!email) {
-        toast.error('Vui lòng nhập email !!!');
-      } else if (email) {
-        const send = await axios.post('/api/sendEmail', { email });
-
-        if (send) {
-          toast.success('Vui lòng kiểm tra email !!!');
-        }
-      }
-    } catch (err) {
-      toast.error('Email không tồn tại !!!');
-    }
-  };
 
   return (
     <div>
       <Helmet>
-        <title>Sign In</title>
+        <title>Login</title>
       </Helmet>
       <div className="container-signin">
         <div className="signin">
@@ -77,7 +63,7 @@ export default function Login() {
                 required
               />
               <div>
-                <a onClick={handleForgotPass}>Forget Password?</a>
+                <a href="/ResetPassword">Forget Password?</a>
               </div>
             </Form.Group>
             <Button variant="primary" type="submit" onClick={handleSubmit}>

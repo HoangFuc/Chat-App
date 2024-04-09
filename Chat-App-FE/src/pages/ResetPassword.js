@@ -1,18 +1,61 @@
-// import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import { Helmet } from 'react-helmet';
-import { useState } from 'react';
+import { React, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-//import axios from 'axios';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 export default function ResetPassword() {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showReset, setShowReset] = useState(true);
+  const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [reTypePassword, setReTypePassword] = useState('');
   const navigate = useNavigate();
-  const handleSubmit = async (e) => {
-    navigate('/login');
+
+  const handleSendEmail = async (e) => {
+    e.preventDefault();
+    if (!email) {
+      toast.error('Vui lòng nhập email !!!');
+    } else {
+      try {
+        {
+          const send = await axios.post('/api/sendEmail', { email });
+          console.log(send);
+          if (send) {
+            toast.success('Vui lòng kiểm tra email !!!');
+            setTimeout(() => {
+              setShowReset(!showReset);
+            }, 4000);
+          }
+        }
+      } catch (err) {
+        toast.error('Email không tồn tại !!!');
+      }
+    }
   };
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    try {
+      const reset = await axios.post('/api/resetPassword', {
+        email,
+        code,
+        newPassword,
+        reTypePassword,
+      });
+      console.log(reset);
+      if (reset) {
+        toast.success('Thay đổi mật khẩu thành công');
+        setTimeout(() => {
+          navigate('/');
+        }, 3000);
+      }
+    } catch (error) {
+      toast.error('Bạn đã nhập sai gì đó !!! ');
+    }
+  };
+
   return (
     <div>
       {' '}
@@ -22,36 +65,67 @@ export default function ResetPassword() {
       <div className="container-resetpassword">
         <div className="resetpassword">
           <div className="title">Reset Password</div>
-          <Form>
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </Form.Group>
-            <Button variant="primary" type="submit" onClick={handleSubmit}>
-              Update
-            </Button>
-          </Form>
+          {showReset ? (
+            <Form>
+              <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </Form.Group>
+              <Button variant="primary" type="submit" onClick={handleSendEmail}>
+                Send Email
+              </Button>
+            </Form>
+          ) : (
+            <Form>
+              <Form.Group className="mb-3" controlId="formBasicCode">
+                <Form.Label>Code</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Code..."
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="formBasicConfirmPassword">
+                <Form.Label>Confirm Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Confirm Password"
+                  value={reTypePassword}
+                  onChange={(e) => setReTypePassword(e.target.value)}
+                />
+              </Form.Group>
+
+              <Button
+                variant="primary"
+                type="submit"
+                onClick={handleResetPassword}
+              >
+                Update
+              </Button>
+            </Form>
+          )}
         </div>
       </div>
-      {/* <ToastContainer
+      <ToastContainer
         position="bottom-center"
         limit={1}
         style={{ width: '500px' }}
-      /> */}
+      />
     </div>
   );
 }
