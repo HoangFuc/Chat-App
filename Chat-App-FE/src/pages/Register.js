@@ -1,15 +1,15 @@
-import { useState } from "react";
-import React from "react";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import { Helmet } from "react-helmet";
+import { useState } from 'react';
+import React from 'react';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import { Helmet } from 'react-helmet';
 export default function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
 
   // const [isShowPassword, setIsShowPassword] = useState(false);
@@ -24,14 +24,14 @@ export default function Register() {
     // }
 
     try {
-      const response = await axios.post("/api/signup", {
+      const response = await axios.post('/api/signup', {
         email,
         password,
       });
       if (response) {
-        toast.success("Đăng ký thành công");
+        toast.success('Đăng ký thành công');
         setTimeout(() => {
-          navigate("/");
+          navigate('/');
         }, 3000);
       }
     } catch (error) {
@@ -81,16 +81,16 @@ export default function Register() {
           </Form>
 
           <div className="text">
-            {" "}
+            {' '}
             <a href="/"> Already have an account</a>
           </div>
         </div>
       </div>
-      {/* <ToastContainer
+      <ToastContainer
         position="bottom-center"
         limit={1}
         style={{ width: '500px' }}
-      /> */}
+      />
     </div>
   );
 }
