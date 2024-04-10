@@ -26,7 +26,7 @@ export default function Login() {
         toast.success('Đăng nhập thành công');
         setTimeout(() => {
           navigate(`/messages/${_id}`);
-        }, 3000);
+        }, 1000);
       }
     } catch (error) {
       toast.error('Đăng nhập thất bại');
