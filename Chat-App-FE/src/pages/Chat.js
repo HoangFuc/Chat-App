@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import './Chat.css';
 import axios from 'axios';
 import { Container, Row, Col, ListGroup, Card, Form, Button, Nav, Navbar } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
 
 function App() {
   const [selectedGroup, setSelectedGroup] = useState('My Cloud');
@@ -10,6 +11,23 @@ function App() {
   const [messages, setMessages] = useState({});
   const [chatMessages, setChatMessages] = useState([]);
   const [showTaskbar, setShowTaskbar] = useState(false);
+  const [users, setUsers] = useState({});
+  const { id } = useParams();
+  const [foundUser, setFoundUser] = useState(null);
+  const [find, setFind] = useState('');
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+  
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(`/api/${id}`); 
+      setUsers(response.data); 
+    } catch (error) {
+      console.error('Error fetching users:', error); 
+    }
+  };
 
   const handleGroupSelection = (group) => {
     setSelectedGroup(group);
@@ -39,7 +57,16 @@ function App() {
     }
   };
 
-   const handleClick = () => {
+  const handleFindUser = async () => {
+    try {
+      const response = await axios.post('/api/find', { username: find });
+      setFoundUser(response.data);
+    } catch (error) {
+      console.log('Không thể tìm thấy người dùng:', error);
+    }
+  };
+
+  const handleClick = () => {
     setShowTaskbar(!showTaskbar);
   };
 
@@ -67,8 +94,11 @@ function App() {
             <Card>
               <Card.Body className="d-flex flex-column">
                 <div className="user-info">
-                  <img src="user-avatar.jpg" alt="User Avatar" className="avatar" onClick={handleClick}/>
-                  <h5>User Name</h5>
+                  <div key={users.id}>
+                    <img src={users.avatar} alt="" className="avatar" onClick={handleClick} />
+                    <h5>{users.username}</h5>
+                  </div>               
+                  {console.log(users)}
                   <div className={`taskbar${showTaskbar ? " active" : ""}`}>
                     <Navbar bg="light" expand="lg">
                       <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -76,7 +106,7 @@ function App() {
                         <Nav className="mr-auto" style={{ flexDirection: "column" }}>
                           <Nav.Link href="#account">Account</Nav.Link>
                           <Nav.Link href="#setting">Setting</Nav.Link>
-                          <Nav.Link href="#account">Logout</Nav.Link>
+                          <Nav.Link href="/">LogOut</Nav.Link>
                         </Nav>
                       </Navbar.Collapse>
                     </Navbar>
@@ -121,13 +151,23 @@ function App() {
             
             {selectedGroup && (
               <Card>
-                <div className="d-flex justify-content-between align-items-center">
-                  <Form.Control
-                    type="text"
-                    placeholder="Search"
-                    
-                  />
-                  <Button variant="outline-secondary">Find</Button>
+                <div>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <Form.Control
+                      type="text"
+                      placeholder="Search"
+                      value={find}
+                      onChange={(e) => setFind(e.target.value)}
+                    />
+                    <Button variant="outline-secondary" onClick={handleFindUser}>Find</Button>
+                  </div>
+                  {foundUser && (
+                    <div>
+                      <h5>Search Results:</h5>
+                      <p>{foundUser.username}</p>
+                    </div>
+                  )}
+
                 </div>
                 <Card.Header>
                   <div className="d-flex justify-content-between align-items-center">
