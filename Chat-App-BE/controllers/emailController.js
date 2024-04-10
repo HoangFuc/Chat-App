@@ -18,7 +18,6 @@ exports.sendEmail = async (req, res) => {
           pass: process.env.EMAIL_PASSWORD,
         },
       });
-
       const info = await transporter.sendMail({
         from: '"Admin" <daylafuc@gmail.com>',
         to: email,
