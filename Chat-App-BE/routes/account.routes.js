@@ -10,7 +10,7 @@ const {
 
 router.get("/listAccount", listAccount); //danh sach account
 router.post("/:id/editName", editName);
-router.get("/find", findUser);
+router.post("/find", findUser);
 router.get("/:id", findUserById);
 
 module.exports = router;
