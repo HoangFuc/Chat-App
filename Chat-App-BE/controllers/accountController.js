@@ -28,8 +28,10 @@ exports.editName = async (req, res) => {
 
 exports.findUser = async (req, res) => {
   const { username } = req.body;
+  console.log("=================username", username);
   try {
     const user = await userModel.findOne({ username });
+    console.log("===================user", user);
     if (!user) {
       return res.status(400).json({ message: "User isn't valid" });
     }
