@@ -1,7 +1,6 @@
 /* App.css */
 
 .app {
-  margin-top: 20px;
   position: relative;
   background-color:#94aad6;
 }
@@ -19,21 +18,16 @@
   margin-right: 10px;
 }
 
-.chat-body {
-  height: 700px;
-  overflow-y: auto;
-}
-
-.chat-messages {
-  margin-bottom: 20px;
-}
-
 form {
   margin-top: 20px;
 }
 
 .row {
   margin-top: 400px;
+}
+
+.selected {
+  background-color: blue;
 }
 
 .col-4 {
@@ -63,4 +57,17 @@ form {
   right: 0;
   padding: 5px;
   cursor: pointer;
+}
+
+.list-group {
+  margin-top: 20px;
+}
+
+.list-group-item {
+  cursor: pointer;
+}
+
+.list-group-item.active {
+  background-color: #007bff;
+  color: #fff;
 }
