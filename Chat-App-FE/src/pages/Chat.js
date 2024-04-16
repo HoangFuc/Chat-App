@@ -29,6 +29,8 @@ function App() {
   const [userList, setUserList] = useState([]);
   const [chatVisible, setChatVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [socket, setSocket] = useState(null);
+  const [onlineUser, setOnlineUser] = useState();
 
   useEffect(() => {
     fetchUsers();
