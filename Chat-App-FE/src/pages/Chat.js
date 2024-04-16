@@ -26,10 +26,9 @@ function App() {
   const { id } = useParams();
   const [foundUser, setFoundUser] = useState(null);
   const [find, setFind] = useState("");
-  const [socket, setSocket] = useState(null);
-  const [onlineUser, setOnlineUser] = useState([]);
-
-  console.log("=================onlineUser", onlineUser);
+  const [userList, setUserList] = useState([]);
+  const [chatVisible, setChatVisible] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -59,8 +58,10 @@ function App() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`/api/${id}`);
-      setUsers(response.data);
+      const listAccountResponse = await axios.get("/api/listAccount");
+      const userResponse = await axios.get(`/api/${id}`);
+      setUsers(userResponse.data);
+      setUserList(listAccountResponse.data);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -114,6 +115,10 @@ function App() {
     setShowTaskbar(!showTaskbar);
   };
 
+  const handleChatClick = () => {
+    setChatVisible(true);
+  };
+
   // const handleDeleteMessage = (index) => {
   //   const updatedMessages = { ...messages };
   //   updatedMessages[selectedGroup].splice(index, 1);
@@ -127,6 +132,11 @@ function App() {
     delete updatedMessages[selectedGroup];
     setMessages(updatedMessages);
     setSelectedGroup(updatedGroups[0]);
+  };
+  const handleSelectedUser = (user) => {
+    setSelectedUser(user);
+    setFoundUser(user);
+    setChatVisible(false);
   };
 
   return (
@@ -165,6 +175,19 @@ function App() {
                       X
                     </div>
                   </div>
+                </div>
+                <div className="found-user">
+                  {foundUser && (
+                    <div className="found-user-info">
+                      <img src={foundUser.avatar} alt="" className="avatar" />
+                      <h3>{foundUser.username}</h3>
+                      <p>Email: {foundUser.email}</p>
+                      <Button onClick={handleChatClick}>Chat</Button>
+                      {chatVisible && (
+                        <div className="chat-box">{/* Khung chat */}</div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <ListGroup className="flex-grow">
                   {groups.map((group, index) => (
@@ -212,6 +235,7 @@ function App() {
                       value={find}
                       onChange={(e) => setFind(e.target.value)}
                     />
+
                     <Button
                       variant="outline-secondary"
                       onClick={handleFindUser}
