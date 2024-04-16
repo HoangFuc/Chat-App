@@ -25,10 +25,11 @@ function App() {
   const [users, setUsers] = useState({});
   const { id } = useParams();
   const [foundUser, setFoundUser] = useState(null);
-  const [find, setFind] = useState('');
-  const [userList, setUserList] = useState([]);
-  const [chatVisible, setChatVisible] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [find, setFind] = useState("");
+  const [socket, setSocket] = useState(null);
+  const [onlineUser, setOnlineUser] = useState([]);
+
+  console.log("=================onlineUser", onlineUser);
 
   useEffect(() => {
     fetchUsers();
@@ -56,14 +57,14 @@ function App() {
     };
   }, [socket]);
 
- const fetchUsers = async () => {
+  const fetchUsers = async () => {
     try {
-      const listAccountResponse = await axios.get('/api/listAccount');
-      const userResponse = await axios.get(`/api/${id}`);
-      setUsers(userResponse.data);
-      setUserList(listAccountResponse.data);
+      const response = await axios.get(`/api/${id}`);
+      setUsers(response.data);
     } catch (error) {
-      console.error('Error fetching users:', error)}}
+      console.error("Error fetching users:", error);
+    }
+  };
 
   const handleGroupSelection = (group) => {
     setSelectedGroup(group);
@@ -112,9 +113,6 @@ function App() {
   const handleClick = () => {
     setShowTaskbar(!showTaskbar);
   };
-  
-  const handleChatClick = () => {
-    setChatVisible(true);
 
   // const handleDeleteMessage = (index) => {
   //   const updatedMessages = { ...messages };
@@ -130,12 +128,6 @@ function App() {
     setMessages(updatedMessages);
     setSelectedGroup(updatedGroups[0]);
   };
-
-  const handleSelectedUser = (user) => {
-    setSelectedUser(user);
-    setFoundUser(user);
-    setChatVisible(false);
-  }
 
   return (
     <div className="app">
@@ -155,12 +147,14 @@ function App() {
                     />
                     <h5>{users.username}</h5>
                   </div>
-                  <div className={`taskbar${showTaskbar ? ' active' : ''}`}>
+                  <div className={`taskbar${showTaskbar ? " active" : ""}`}>
                     <Navbar bg="light" expand="lg">
                       <Navbar.Toggle aria-controls="basic-navbar-nav" />
                       <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="mr-auto" style={{ flexDirection: 'column' }}>
-
+                        <Nav
+                          className="mr-auto"
+                          style={{ flexDirection: "column" }}
+                        >
                           <Nav.Link href="#account">Account</Nav.Link>
                           <Nav.Link href="#setting">Setting</Nav.Link>
                           <Nav.Link href="/">LogOut</Nav.Link>
@@ -172,17 +166,6 @@ function App() {
                     </div>
                   </div>
                 </div>
-                <div className="found-user">
-                  {foundUser && (
-                    <div className="found-user-info">
-                      <img src={foundUser.avatar} alt="" className="avatar" />
-                      <h3>{foundUser.username}</h3>
-                      <p>Email: {foundUser.email}</p>
-                      <Button onClick={handleChatClick}>Chat</Button>
-                      {chatVisible && 
-                      <div className="chat-box">
-                        {/* Khung chat */}
-                      </div>}
                 <ListGroup className="flex-grow">
                   {groups.map((group, index) => (
                     <ListGroup.Item
@@ -211,7 +194,7 @@ function App() {
                         Create Group
                       </Button>
                     </div>
-                  )}
+                  </div>
                 </div>
               </Card.Body>
             </Card>
@@ -229,27 +212,6 @@ function App() {
                       value={find}
                       onChange={(e) => setFind(e.target.value)}
                     />
-                    <Button variant="outline-secondary" onClick={handleFindUser}>
-                      Find
-                    </Button>
-                  </div>
-                  <ListGroup className="flex-grow">
-                    {userList.map((user) => (
-                      <ListGroup.Item
-                        key={user.id}
-                        active={selectedUser && selectedUser.id === user.id}
-                        onClick={() => handleSelectedUser(user)}>
-                        {user.username}
-                      </ListGroup.Item>
-                    ))}
-                  </ListGroup>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md={8}>
-            {/* Right section */}
-            {/* Hiển thị thông tin người dùng trong Left section */}
                     <Button
                       variant="outline-secondary"
                       onClick={handleFindUser}
