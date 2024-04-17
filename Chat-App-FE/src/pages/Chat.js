@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Chat.css';
 import axios from 'axios';
 import { Container, Row, Col, ListGroup, Card, Form, Button, Nav, Navbar } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 function App() {
   const [showTaskbar, setShowTaskbar] = useState(false);
@@ -11,8 +11,10 @@ function App() {
   const [foundUser, setFoundUser] = useState(null);
   const [find, setFind] = useState('');
   const [userList, setUserList] = useState([]);
-  const [chatVisible, setChatVisible] = useState(false);
+  const [isChatVisible, setIsChatVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [chatContent, setChatContent] = useState([]);
+  
 
   useEffect(() => {
     fetchUsers();
@@ -42,14 +44,27 @@ function App() {
     setShowTaskbar(!showTaskbar);
   };
   
-  const handleChatClick = () => {
-    setChatVisible(true);
+  const handleCreateChatClick = async () => {
+    try {
+      const response = await axios.post('/api/createChat', {
+        firstId: users._id,
+        secondId: foundUser._id
+      });
+      if (Array.isArray(response.data)) {
+        setChatContent(response.data);
+        setIsChatVisible(true);
+      } else {
+        console.log('Invalid chat content:', response.data);
+      }
+    } catch (error) {
+      console.log('Error creating chat:', error);
+    }
   };
 
   const handleSelectedUser = (user) => {
     setSelectedUser(user);
     setFoundUser(user);
-    setChatVisible(false);
+    setIsChatVisible(false);
   }
 
   return (
@@ -87,11 +102,12 @@ function App() {
                       <img src={foundUser.avatar} alt="" className="avatar" />
                       <h3>{foundUser.username}</h3>
                       <p>Email: {foundUser.email}</p>
-                      <Button onClick={handleChatClick}>Chat</Button>
-                      {chatVisible && 
+                      <Button onClick={handleCreateChatClick}>Chat</Button>
+                      {isChatVisible && 
                       <div className="chat-box">
                         {/* Khung chat */}
                       </div>}
+
                     </div>
                   )}
                 </div>
@@ -123,7 +139,28 @@ function App() {
           </Col>
           <Col md={8}>
             {/* Right section */}
-            {/* Hiển thị thông tin người dùng trong Left section */}
+            {isChatVisible && selectedUser && (
+              <Card>
+                <Card.Header>
+                  <div className="d-flex align-items-center">
+                    <img src={selectedUser.avatar} alt="" className="avatar" />
+                    <h4 className="ml-2">{selectedUser.username}</h4>
+                  </div>
+                </Card.Header>
+                <Card.Body className="chat-box">
+                  {chatContent.map((message, index) => (
+                    <div key={index} className="message">
+                      <span className="sender">{message.sender}</span>
+                      <span className="content">{message.content}</span>
+                    </div>
+                  ))}
+                </Card.Body>
+                <Card.Footer>
+                  <Form.Control type="text" placeholder="Type your message" />
+                  <Button variant="primary" className="mt-2">Send</Button>
+                </Card.Footer>
+              </Card>
+            )}
           </Col>
         </Row>
       </Container>
