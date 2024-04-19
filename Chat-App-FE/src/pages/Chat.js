@@ -1,20 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import './Chat.css';
-import axios from 'axios';
-import { Container, Row, Col, ListGroup, Card, Form, Button, Nav, Navbar } from 'react-bootstrap';
-import { useParams} from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import "./Chat.css";
+import axios from "axios";
+import {
+  Container,
+  Row,
+  Col,
+  ListGroup,
+  Card,
+  Form,
+  Button,
+  Nav,
+  Navbar,
+} from "react-bootstrap";
+import { useParams } from "react-router-dom";
 
 function App() {
   const [showTaskbar, setShowTaskbar] = useState(false);
   const [users, setUsers] = useState({});
   const { id } = useParams();
   const [foundUser, setFoundUser] = useState(null);
-  const [find, setFind] = useState('');
+  const [find, setFind] = useState("");
   const [userList, setUserList] = useState([]);
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatContent, setChatContent] = useState([]);
-  
+  const [chatRoom, setChatRoom] = useState();
+  const [message, setMessage] = useState([]);
 
   useEffect(() => {
     fetchUsers();
@@ -22,55 +33,78 @@ function App() {
 
   const fetchUsers = async () => {
     try {
-      const listAccountResponse = await axios.get('/api/listAccount');
+      const listAccountResponse = await axios.get("/api/listAccount");
       const userResponse = await axios.get(`/api/${id}`);
       setUsers(userResponse.data);
       setUserList(listAccountResponse.data);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
     }
   };
 
   const handleFindUser = async () => {
     try {
-      const response = await axios.post('/api/find', { username: find });
+      const response = await axios.post("/api/find", { username: find });
       setFoundUser(response.data);
     } catch (error) {
-      console.log('Không thể tìm thấy người dùng:', error);
+      console.log("Không thể tìm thấy người dùng:", error);
     }
   };
 
   const handleClick = () => {
     setShowTaskbar(!showTaskbar);
   };
-  
+
   const handleCreateChatClick = async () => {
+    let dataMessage;
     try {
-      const response = await axios.post('/api/createChat', {
+      const response = await axios.post("/api/createChat", {
         firstId: users._id,
-        secondId: foundUser._id
+        secondId: foundUser._id,
       });
-      if (response.data) {
-        const chatId = response.data._id;
-        if (chatId) {
-          const chatResponse = await axios.get(`/api/createChat/${chatId}`); 
-          setChatContent(chatResponse.data.chatContent); 
-          setIsChatVisible(true); 
+      if (response) {
+        console.log("=====================res", response.data._id);
+
+        setChatRoom(response.data._id);
+        setIsChatVisible(true);
+
+        console.log("===================chatroom", chatRoom);
+        dataMessage = await axios.post("/api/getMessage", {
+          chatId: chatRoom,
+        });
+        if (dataMessage) {
+          setMessage(dataMessage.data);
+          console.log("================message", dataMessage);
         }
-      } else {
-        console.log('Invalid chat content:', response.data);
       }
     } catch (error) {
-      console.log('Error creating/chatting:', error);
+      console.log("================ereror", error);
+      setChatRoom(error.response.data._id);
+      setIsChatVisible(true);
     }
   };
 
+  // const handleGetMessage = async (chatRoom) => {
+  //   try {
+  //     const dataMessage = await axios.post("/api/getMessage", {
+  //       chatId: chatRoom,
+  //     });
+  //     if (dataMessage) {
+  //       setMessage(dataMessage.data);
+  //     }
+  //   } catch (err) {
+  //     console.log("===============err", err);
+  //   }
+  // };
+
+  // useEffect(handleGetMessage(), []);
   const handleSelectedUser = (user) => {
     setSelectedUser(user);
     setFoundUser(user);
     setIsChatVisible(false);
-  }
+  };
 
+  console.log("==================message", message);
   return (
     <div className="app">
       <Container>
@@ -81,14 +115,22 @@ function App() {
               <Card.Body className="d-flex flex-column">
                 <div className="user-info">
                   <div key={users.id}>
-                    <img src={users.avatar} alt="" className="avatar" onClick={handleClick} />
+                    <img
+                      src={users.avatar}
+                      alt=""
+                      className="avatar"
+                      onClick={handleClick}
+                    />
                     <h5>{users.username}</h5>
                   </div>
-                  <div className={`taskbar${showTaskbar ? ' active' : ''}`}>
+                  <div className={`taskbar${showTaskbar ? " active" : ""}`}>
                     <Navbar bg="light" expand="lg">
                       <Navbar.Toggle aria-controls="basic-navbar-nav" />
                       <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="mr-auto" style={{ flexDirection: 'column' }}>
+                        <Nav
+                          className="mr-auto"
+                          style={{ flexDirection: "column" }}
+                        >
                           <Nav.Link href="#account">Account</Nav.Link>
                           <Nav.Link href="#setting">Setting</Nav.Link>
                           <Nav.Link href="/">LogOut</Nav.Link>
@@ -107,7 +149,6 @@ function App() {
                       <h3>{foundUser.username}</h3>
                       <p>Email: {foundUser.email}</p>
                       <Button onClick={handleCreateChatClick}>Chat</Button>
-
                     </div>
                   )}
                 </div>
@@ -119,7 +160,10 @@ function App() {
                       value={find}
                       onChange={(e) => setFind(e.target.value)}
                     />
-                    <Button variant="outline-secondary" onClick={handleFindUser}>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={handleFindUser}
+                    >
                       Find
                     </Button>
                   </div>
@@ -128,7 +172,8 @@ function App() {
                       <ListGroup.Item
                         key={user.id}
                         active={selectedUser && selectedUser.id === user.id}
-                        onClick={() => handleSelectedUser(user)}>
+                        onClick={() => handleSelectedUser(user)}
+                      >
                         {user.username}
                       </ListGroup.Item>
                     ))}
