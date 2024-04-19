@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Chat.css';
 import axios from 'axios';
 import { Container, Row, Col, ListGroup, Card, Form, Button, Nav, Navbar } from 'react-bootstrap';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams} from 'react-router-dom';
 
 function App() {
   const [showTaskbar, setShowTaskbar] = useState(false);
@@ -50,14 +50,18 @@ function App() {
         firstId: users._id,
         secondId: foundUser._id
       });
-      if (Array.isArray(response.data)) {
-        setChatContent(response.data);
-        setIsChatVisible(true);
+      if (response.data) {
+        const chatId = response.data._id;
+        if (chatId) {
+          const chatResponse = await axios.get(`/api/createChat/${chatId}`); 
+          setChatContent(chatResponse.data.chatContent); 
+          setIsChatVisible(true); 
+        }
       } else {
         console.log('Invalid chat content:', response.data);
       }
     } catch (error) {
-      console.log('Error creating chat:', error);
+      console.log('Error creating/chatting:', error);
     }
   };
 
@@ -103,10 +107,6 @@ function App() {
                       <h3>{foundUser.username}</h3>
                       <p>Email: {foundUser.email}</p>
                       <Button onClick={handleCreateChatClick}>Chat</Button>
-                      {isChatVisible && 
-                      <div className="chat-box">
-                        {/* Khung chat */}
-                      </div>}
 
                     </div>
                   )}
@@ -138,7 +138,7 @@ function App() {
             </Card>
           </Col>
           <Col md={8}>
-            {/* Right section */}
+            {/*   */}
             {isChatVisible && selectedUser && (
               <Card>
                 <Card.Header>
@@ -157,7 +157,9 @@ function App() {
                 </Card.Body>
                 <Card.Footer>
                   <Form.Control type="text" placeholder="Type your message" />
-                  <Button variant="primary" className="mt-2">Send</Button>
+                  <Button variant="primary" className="mt-2">
+                    Send
+                  </Button>
                 </Card.Footer>
               </Card>
             )}
