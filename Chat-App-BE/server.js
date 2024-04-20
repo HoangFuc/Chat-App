@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 const authRoutes = require("./routes/auth.routes");
 const emailRoutes = require("./routes/email.routes");
+
 const userRouters = require("./routes/user.routes");
 const accountRoutes = require("./routes/account.routes");
 const chatRoutes = require("./routes/chatRoom.routes");
@@ -64,6 +65,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api", authRoutes);
 app.use("/api", emailRoutes);
+
 app.use("/api/users", userRouters);
 app.use("/api", accountRoutes);
 app.use("/api", chatRoutes);
