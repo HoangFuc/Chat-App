@@ -1,5 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-
+import { Routes, Route } from 'react-router-dom';
 import TableUsers from './components/TableUsers';
 import Login from './pages/Login';
 import Chat from './pages/Chat';
@@ -12,11 +11,10 @@ function App() {
     <div className="app-container">
       <TableUsers />
       <Routes>
-        <Route path="/" element={<Chat />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/messages/:id" element={<Chat />} />
+        <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/resetpassword/:id" element={<ResetPassword />} />
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/resetpassword" element={<ResetPassword />} />
       </Routes>
     </div>
   );

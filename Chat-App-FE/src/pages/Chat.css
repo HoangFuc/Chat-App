@@ -1,7 +1,8 @@
 /* App.css */
 
 .app {
-  margin-top: 20px;
+  position: relative;
+  background-color:#94aad6;
 }
 
 .user-info {
@@ -17,15 +18,6 @@
   margin-right: 10px;
 }
 
-.chat-body {
-  height: 700px;
-  overflow-y: auto;
-}
-
-.chat-messages {
-  margin-bottom: 20px;
-}
-
 form {
   margin-top: 20px;
 }
@@ -34,8 +26,81 @@ form {
   margin-top: 400px;
 }
 
+.selected {
+  background-color: blue;
+}
+
 .col-4 {
   flex: 0 0 auto;
   width: 33.3333333333%;
   padding-top: 20px;
+}
+
+.taskbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #f8f9fa;
+  padding: 10px;
+  display: none;
+  overflow: hidden;
+  z-index: 9999;
+}
+
+.taskbar.active {
+  display: block;
+}
+.close-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.list-group {
+  margin-top: 20px;
+}
+
+.list-group-item {
+  cursor: pointer;
+}
+
+.list-group-item.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.found-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.found-user-info h3 {
+  margin-bottom: 0;
+}
+
+.found-user-info .avatar {
+  margin-right: 10px;
+}
+
+.search-list-container {
+  flex-grow: 1;
+}
+
+.list-group-container {
+  max-height: 300px; /* Đặt chiều cao tối đa của container */
+  overflow-y: auto; /* Kiểm soát cuộn trang nếu nội dung vượt quá kích thước của container */
+}
+
+.list-group-scroll {
+  overflow-y: auto; /* Kiểm soát cuộn trang nếu có quá nhiều người trong danh sách */
+}
+/* ------------------------------------ */
+
+.chat-box {
+  height: calc(100vh - 200px); 
+  max-height: calc(100vh - 200px); 
+  overflow-y: auto; 
 }

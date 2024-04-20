@@ -2,6 +2,7 @@ import { useState } from 'react';
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import { Helmet } from 'react-helmet';
@@ -9,30 +10,33 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  // const [isShowPassword, setIsShowPassword] = useState(false);
+  const navigate = useNavigate();
 
+  // const [isShowPassword, setIsShowPassword] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
     // if (password !== confirmPassword) {
     //   // Mật khẩu không khớp, yêu cầu người dùng nhập lại
-    //   alert("Mật khẩu không khớp. Vui lòng nhập lại.");
-    //   setPassword("");
-    //   setConfirmPassword("");
+    //   alert('Mật khẩu không khớp. Vui lòng nhập lại.');
+    //   setPassword('');
+    //   setConfirmPassword('');
     //   return;
     // }
 
-    //   try {
-    //     const response = await axios.post('/api/signup', {
-
-    //       email,
-    //       password,
-    //     });
-
-    //     console.log(response.data);
-    //   } catch (error) {
-    //       console.error(error);
-    //   }
-    toast.success('Đăng nhập thành công');
+    try {
+      const response = await axios.post('/api/signup', {
+        email,
+        password,
+      });
+      if (response) {
+        toast.success('Đăng ký thành công');
+        setTimeout(() => {
+          navigate('/');
+        }, 3000);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <div>
@@ -78,7 +82,7 @@ export default function Register() {
 
           <div className="text">
             {' '}
-            <a href="/login"> Already have an account</a>
+            <a href="/"> Already have an account</a>
           </div>
         </div>
       </div>

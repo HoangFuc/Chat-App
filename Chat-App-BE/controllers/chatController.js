@@ -7,7 +7,7 @@ exports.createChat = async (req, res) => {
     const chat = await chatModel.findOne({
       members: [firstId, secondId],
     });
-    if (chat) return res.status(404).json("The Room has existed");
+    if (chat) return res.json(chat);
 
     const newChat = new chatModel({
       members: [firstId, secondId],
