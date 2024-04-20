@@ -1,6 +1,6 @@
-const nodeMailer = require("nodemailer");
-const userModel = require("../models/users");
-const dotenv = require("dotenv").config();
+const nodeMailer = require('nodemailer');
+const userModel = require('../models/users');
+const dotenv = require('dotenv').config();
 
 exports.sendEmail = async (req, res) => {
   const { email } = req.body;
@@ -10,7 +10,7 @@ exports.sendEmail = async (req, res) => {
   if (data) {
     try {
       const transporter = nodeMailer.createTransport({
-        host: "smtp.gmail.com",
+        host: 'smtp.gmail.com',
         port: 587,
         secure: false,
         auth: {
@@ -22,13 +22,13 @@ exports.sendEmail = async (req, res) => {
       const info = await transporter.sendMail({
         from: '"Admin" <daylafuc@gmail.com>',
         to: email,
-        subject: "Cấp lại mật khẩu",
-        text: "",
+        subject: 'Cấp lại mật khẩu',
+        text: '',
         html: `Mã xác thực của bạn là : <b>${data.code}<b>`,
       });
-      return res.status(200).json("Gui Email thanh cong");
+      return res.status(200).json('Gui Email thanh cong');
     } catch (err) {
-      console.log("[ERR] :", err);
+      console.log('[ERR] :', err);
     }
-  } else return res.status(500).json("Sai email");
+  } else return res.status(500).json('Sai email');
 };
