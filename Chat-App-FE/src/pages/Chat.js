@@ -126,6 +126,7 @@ function App() {
                         <div>
                           <img src={foundUser.avatar} alt="" className="avatar" />
                           <h3>{foundUser.username}</h3>
+                          <p>Email: {foundUser.email}</p>
                         </div>
                         <Button onClick={handleCreateChatClick}>Chat</Button>
                       </div>
