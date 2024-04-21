@@ -53,16 +53,17 @@ function App() {
       if (response.data) {
         const chatId = response.data._id;
         if (chatId) {
-          const chatResponse = await axios.post(`/api/getMessage`, {chatId}); 
+          const chatResponse = await axios.post(`/api/getMessage`, { chatId });
           setChatId(chatId);
-          setChatContent(chatResponse.data.chatContent); 
-          setIsChatVisible(true); 
+          setChatContent(chatResponse.data.chatContent);
+          setIsChatVisible(true);
+          handleSendMessage(chatId);
         }
       } else {
         console.log('Invalid chat content:', response.data);
       }
     } catch (err) {
-      setIsChatVisible(true); 
+      setIsChatVisible(true);
     }
   };
 
@@ -81,12 +82,10 @@ function App() {
     axios
       .post('/api/createMessage', message)
       .then(res => {
-        // Xử lý logic sau khi gửi tin nhắn thành công
         console.log(res);
-        setMessageContent(''); // Xóa nội dung tin nhắn sau khi gửi
+        setMessageContent(''); 
       })
       .catch(err => {
-        // Xử lý logic khi gửi tin nhắn thất bại
         console.log(err);
       });
   };
@@ -173,7 +172,7 @@ function App() {
                   </div>
                 </Card.Header>
                 <Card.Body className="chat-box">
-                  {chatContent.map((message, index) => (
+                  {chatContent && chatContent.map((message, index) => (
                     <div key={index} className={`message ${message.chatId === users._id ? 'sent' : 'received'}`}>
                       <span className="sender">{message.chat}</span>
                       <span className="content">{message.text}</span>
