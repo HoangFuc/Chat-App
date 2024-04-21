@@ -1,8 +1,9 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import './Chat.css';
 import axios from 'axios';
 import { Container, Row, Col, ListGroup, Card, Form, Button, Nav, Navbar } from 'react-bootstrap';
-import { useParams} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import _ from 'lodash';
 
 function App() {
   const [showTaskbar, setShowTaskbar] = useState(false);
@@ -43,29 +44,45 @@ function App() {
   const handleClick = () => {
     setShowTaskbar(!showTaskbar);
   };
-  
+
   const handleCreateChatClick = async () => {
     try {
       const response = await axios.post('/api/createChat', {
         firstId: users._id,
         secondId: foundUser._id
       });
-      if (response.data) {
-        const chatId = response.data._id;
-        if (chatId) {
-          const chatResponse = await axios.post(`/api/getMessage`, { chatId });
-          setChatId(chatId);
-          setChatContent(chatResponse.data.chatContent);
-          setIsChatVisible(true);
-          handleSendMessage(chatId);
-        }
+      console.log('=======res', response);
+      if (response && response.data._id) {
+        setChatId(response.data._id);
+        setIsChatVisible(true);
+        handleGetMessage(response.data._id)
       } else {
         console.log('Invalid chat content:', response.data);
       }
     } catch (err) {
+      console.log('===============err', err)
       setIsChatVisible(true);
     }
   };
+
+  const handleGetMessage = async (chatId) => {
+    try {
+      const data = await axios.post("/api/getMessage", {
+        chatId
+      })
+      if (!_.isEmpty(data)) {
+        setChatContent(data)
+      }
+    } catch (err) {
+      console.log('==============err get Messsage', err)
+    }
+  }
+
+
+  useEffect(() => {
+    handleGetMessage()
+  }, [])
+
 
   const handleSelectedUser = (user) => {
     setSelectedUser(user);
@@ -73,21 +90,21 @@ function App() {
     setIsChatVisible(false);
   }
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     const message = {
       chatId: chatId,
       senderId: selectedUser._id,
       text: messageContent
     };
-    axios
-      .post('/api/createMessage', message)
-      .then(res => {
-        console.log(res);
-        setMessageContent(''); 
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    try {
+      const data = await axios.post('/api/createMessage', message)
+      if (data) {
+        handleGetMessage(message.chatId)
+      } else console.log('====================err')
+    }
+    catch (err) {
+      console.log(err);
+    };
   };
 
   return (
@@ -156,7 +173,7 @@ function App() {
                         </ListGroup.Item>
                       ))}
                     </ListGroup>
-                  </div>  
+                  </div>
                 </div>
               </Card.Body>
             </Card>
