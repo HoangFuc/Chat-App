@@ -15,7 +15,7 @@ function App() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatContent, setChatContent] = useState([]);
   const [messageContent, setMessageContent] = useState('');
-
+  const [chatId, setChatId] = useState('');
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -53,7 +53,8 @@ function App() {
       if (response.data) {
         const chatId = response.data._id;
         if (chatId) {
-          const chatResponse = await axios.get(`/api/createChat/${chatId}`); 
+          const chatResponse = await axios.post(`/api/getMessage`, {chatId}); 
+          setChatId(chatId);
           setChatContent(chatResponse.data.chatContent); 
           setIsChatVisible(true); 
         }
@@ -73,7 +74,7 @@ function App() {
 
   const handleSendMessage = () => {
     const message = {
-      chatId: users._id,
+      chatId: chatId,
       senderId: selectedUser._id,
       text: messageContent
     };
