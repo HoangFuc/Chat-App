@@ -14,6 +14,7 @@ import {
 } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import _ from "lodash";
+import { io } from "socket.io-client";
 
 function App() {
   const [showTaskbar, setShowTaskbar] = useState(false);
@@ -27,20 +28,50 @@ function App() {
   const [chatContent, setChatContent] = useState([]);
   const [messageContent, setMessageContent] = useState("");
   const [chatId, setChatId] = useState("");
+  const [socket, setSocket] = useState(null);
+  const [onlineUser, setOnlineUser] = useState([]);
+
+  console.log("============onlineUser", onlineUser);
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    const newSocket = io("http://localhost:2304");
+    setSocket(newSocket);
+  }, [users]);
+
+  useEffect(() => {
+    if (socket === null) return;
+    socket.emit("addNewUser", id);
+    socket.on("getOnlineUsers", (res) => {
+      setOnlineUser(res);
+    });
+    return () => {
+      socket.off("getOnlineUsers");
+    };
+  }, [socket]);
+
+  //send message
+  useEffect(() => {
+    if (socket === null) return;
+    const chatMember = foundUser._id;
+    socket.emit("sendMessage", { ...messageContent, chatMember });
+  }, [messageContent]);
+
+  // receive message
 
   const fetchUsers = async () => {
     try {
       const listAccountResponse = await axios.get("/api/listAccount");
       const userResponse = await axios.get(`/api/${id}`);
       setUsers(userResponse.data);
+
       setUserList(listAccountResponse.data);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const handleFindUser = async () => {
     try {
@@ -76,7 +107,7 @@ function App() {
   };
 
   const handleGetMessage = async (chatId) => {
-    try {
+    if (chatId) {
       const data = await axios.post("/api/getMessage", {
         chatId,
       });
@@ -85,14 +116,8 @@ function App() {
       } else {
         setChatContent(data.data);
       }
-    } catch (err) {
-      console.log("==============err get Messsage", err);
     }
   };
-
-  useEffect(() => {
-    handleGetMessage();
-  }, []);
 
   const handleSelectedUser = (user) => {
     setSelectedUser(user);
@@ -109,13 +134,18 @@ function App() {
     try {
       const data = await axios.post("/api/createMessage", message);
       if (data) {
+        setChatContent((prev) => [...prev, data.data]);
         handleGetMessage(message.chatId);
         setMessageContent("");
-      } else console.log("====================err");
+      } else console.log("====================err at send message");
     } catch (err) {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    handleGetMessage();
+  }, [users]);
 
   return (
     <div className="app">
@@ -184,7 +214,7 @@ function App() {
                       variant="outline-secondary"
                       onClick={handleFindUser}
                     >
-                      Find
+                      FindsetFoundUser
                     </Button>
                   </div>
                   <div className="list-group-container">
@@ -220,7 +250,7 @@ function App() {
                       <div
                         key={index}
                         className={`message ${
-                          message.senderId === users._id ? "left" : "right" 
+                          message.senderId === users._id ? "left" : "right"
                         }`}
                       >
                         <span className="sender" style={{ float: "right" }}>
