@@ -104,3 +104,29 @@ form {
   max-height: calc(100vh - 200px); 
   overflow-y: auto; 
 }
+
+.message.right {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.message.left {
+  display: flex;
+  flex-direction: row;
+}
+
+.message.right .content {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-left: 10px; 
+}
+
+.message.left .content {
+  background-color: #f1f1f1;
+  color: #333;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-right: 10px; 
+}
