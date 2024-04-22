@@ -1,43 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import './Chat.css';
-import axios from 'axios';
-import { Container, Row, Col, ListGroup, Card, Form, Button, Nav, Navbar } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
-import _ from 'lodash';
+import React, { useState, useEffect } from "react";
+import "./Chat.css";
+import axios from "axios";
+import {
+  Container,
+  Row,
+  Col,
+  ListGroup,
+  Card,
+  Form,
+  Button,
+  Nav,
+  Navbar,
+} from "react-bootstrap";
+import { useParams } from "react-router-dom";
+import _ from "lodash";
 
 function App() {
   const [showTaskbar, setShowTaskbar] = useState(false);
   const [users, setUsers] = useState({});
   const { id } = useParams();
   const [foundUser, setFoundUser] = useState(null);
-  const [find, setFind] = useState('');
+  const [find, setFind] = useState("");
   const [userList, setUserList] = useState([]);
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatContent, setChatContent] = useState([]);
-  const [messageContent, setMessageContent] = useState('');
-  const [chatId, setChatId] = useState('');
+  const [messageContent, setMessageContent] = useState("");
+  const [chatId, setChatId] = useState("");
   useEffect(() => {
     fetchUsers();
   }, []);
 
   const fetchUsers = async () => {
     try {
-      const listAccountResponse = await axios.get('/api/listAccount');
+      const listAccountResponse = await axios.get("/api/listAccount");
       const userResponse = await axios.get(`/api/${id}`);
       setUsers(userResponse.data);
       setUserList(listAccountResponse.data);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
     }
   };
 
   const handleFindUser = async () => {
     try {
-      const response = await axios.post('/api/find', { username: find });
+      const response = await axios.post("/api/find", { username: find });
       setFoundUser(response.data);
     } catch (error) {
-      console.log('Không thể tìm thấy người dùng:', error);
+      console.log("Không thể tìm thấy người dùng:", error);
     }
   };
 
@@ -47,20 +57,20 @@ function App() {
 
   const handleCreateChatClick = async () => {
     try {
-      const response = await axios.post('/api/createChat', {
+      const response = await axios.post("/api/createChat", {
         firstId: users._id,
-        secondId: foundUser._id
+        secondId: foundUser._id,
       });
-      console.log('=======res', response);
+      console.log("=======res", response);
       if (response && response.data._id) {
         setChatId(response.data._id);
         setIsChatVisible(true);
-        handleGetMessage(response.data._id)
+        handleGetMessage(response.data._id);
       } else {
-        console.log('Invalid chat content:', response.data);
+        console.log("Invalid chat content:", response.data);
       }
     } catch (err) {
-      console.log('===============err', err)
+      console.log("===============err", err);
       setIsChatVisible(true);
     }
   };
@@ -68,43 +78,43 @@ function App() {
   const handleGetMessage = async (chatId) => {
     try {
       const data = await axios.post("/api/getMessage", {
-        chatId
-      })
-      if (!_.isEmpty(data)) {
-        setChatContent(data)
+        chatId,
+      });
+      if (_.isEmpty(data)) {
+        setChatContent([]);
+      } else {
+        setChatContent(data.data);
       }
     } catch (err) {
-      console.log('==============err get Messsage', err)
+      console.log("==============err get Messsage", err);
     }
-  }
-
+  };
 
   useEffect(() => {
-    handleGetMessage()
-  }, [])
-
+    handleGetMessage();
+  }, []);
 
   const handleSelectedUser = (user) => {
     setSelectedUser(user);
     setFoundUser(user);
     setIsChatVisible(false);
-  }
+  };
 
   const handleSendMessage = async () => {
     const message = {
       chatId: chatId,
       senderId: selectedUser._id,
-      text: messageContent
+      text: messageContent,
     };
     try {
-      const data = await axios.post('/api/createMessage', message)
+      const data = await axios.post("/api/createMessage", message);
       if (data) {
-        handleGetMessage(message.chatId)
-      } else console.log('====================err')
-    }
-    catch (err) {
+        handleGetMessage(message.chatId);
+        setMessageContent("");
+      } else console.log("====================err");
+    } catch (err) {
       console.log(err);
-    };
+    }
   };
 
   return (
@@ -117,14 +127,22 @@ function App() {
               <Card.Body className="d-flex flex-column">
                 <div className="user-info">
                   <div key={users.id}>
-                    <img src={users.avatar} alt="" className="avatar" onClick={handleClick} />
+                    <img
+                      src={users.avatar}
+                      alt=""
+                      className="avatar"
+                      onClick={handleClick}
+                    />
                     <h5>{users.username}</h5>
                   </div>
-                  <div className={`taskbar${showTaskbar ? ' active' : ''}`}>
+                  <div className={`taskbar${showTaskbar ? " active" : ""}`}>
                     <Navbar bg="light" expand="lg">
                       <Navbar.Toggle aria-controls="basic-navbar-nav" />
                       <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="mr-auto" style={{ flexDirection: 'column' }}>
+                        <Nav
+                          className="mr-auto"
+                          style={{ flexDirection: "column" }}
+                        >
                           <Nav.Link href="#account">Account</Nav.Link>
                           <Nav.Link href="#setting">Setting</Nav.Link>
                           <Nav.Link href="/">LogOut</Nav.Link>
@@ -141,7 +159,11 @@ function App() {
                     <div className="found-user-info">
                       <div className="d-flex align-items-center justify-content-between">
                         <div>
-                          <img src={foundUser.avatar} alt="" className="avatar" />
+                          <img
+                            src={foundUser.avatar}
+                            alt=""
+                            className="avatar"
+                          />
                           <h3>{foundUser.username}</h3>
                           <p>Email: {foundUser.email}</p>
                         </div>
@@ -158,7 +180,10 @@ function App() {
                       value={find}
                       onChange={(e) => setFind(e.target.value)}
                     />
-                    <Button variant="outline-secondary" onClick={handleFindUser}>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={handleFindUser}
+                    >
                       Find
                     </Button>
                   </div>
@@ -168,7 +193,8 @@ function App() {
                         <ListGroup.Item
                           key={user.id}
                           active={selectedUser && selectedUser.id === user.id}
-                          onClick={() => handleSelectedUser(user)}>
+                          onClick={() => handleSelectedUser(user)}
+                        >
                           {user.username}
                         </ListGroup.Item>
                       ))}
@@ -189,19 +215,30 @@ function App() {
                   </div>
                 </Card.Header>
                 <Card.Body className="chat-box">
-                  {chatContent && chatContent.map((message, index) => (
-                    <div key={index} className={`message ${message.chatId === users._id ? 'sent' : 'received'}`}>
-                      <span className="sender">{message.chat}</span>
-                      <span className="content">{message.text}</span>
-                    </div>
-                  ))}
+                  {chatContent &&
+                    chatContent.map((message, index) => (
+                      <>
+                        {console.log("==============message", message)}
+                        <div
+                          key={index}
+                          className={`message ${
+                            message.senderId === users._id ? "right" : "left"
+                          }`}
+                        >
+                          <span className="sender" style={{ float: "right" }}>
+                            {message.chat}
+                          </span>
+                          <span className="content">{message.text}</span>
+                        </div>
+                      </>
+                    ))}
                 </Card.Body>
                 <Card.Footer className="d-flex align-items-center">
                   <Form.Control
                     type="text"
                     placeholder="Type your message"
                     value={messageContent}
-                    onChange={e => setMessageContent(e.target.value)}
+                    onChange={(e) => setMessageContent(e.target.value)}
                     className="flex-grow-1 mr-2"
                   />
                   <Button variant="primary" onClick={handleSendMessage}>
