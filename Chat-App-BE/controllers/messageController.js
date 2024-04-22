@@ -27,6 +27,7 @@ exports.getMessage = async (req, res) => {
   console.log("=============chatId", chatId);
   try {
     const message = await messageModel.find({ chatId });
+    console.log('===============message', message);
     res.status(200).json(message);
   } catch (err) {
     console.log("==================err", err);
