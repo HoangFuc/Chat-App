@@ -217,20 +217,17 @@ function App() {
                 <Card.Body className="chat-box">
                   {chatContent &&
                     chatContent.map((message, index) => (
-                      <>
-                        {console.log("==============message", message)}
-                        <div
-                          key={index}
-                          className={`message ${
-                            message.senderId === users._id ? "right" : "left"
-                          }`}
-                        >
-                          <span className="sender" style={{ float: "right" }}>
-                            {message.chat}
-                          </span>
-                          <span className="content">{message.text}</span>
-                        </div>
-                      </>
+                      <div
+                        key={index}
+                        className={`message ${
+                          message.senderId === users._id ? "left" : "right" 
+                        }`}
+                      >
+                        <span className="sender" style={{ float: "right" }}>
+                          {message.chat}
+                        </span>
+                        <span className="content">{message.text}</span>
+                      </div>
                     ))}
                 </Card.Body>
                 <Card.Footer className="d-flex align-items-center">
