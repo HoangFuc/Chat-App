@@ -105,6 +105,10 @@ form {
   overflow-y: auto; 
 }
 
+.message {
+  margin-bottom: 10px;
+}
+
 .message.right {
   display: flex;
   flex-direction: row-reverse;
