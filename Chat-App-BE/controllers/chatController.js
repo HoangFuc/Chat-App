@@ -4,10 +4,16 @@ exports.createChat = async (req, res) => {
   const { firstId, secondId } = req.body;
 
   try {
-    const chat = await chatModel.findOne({
+    const chatA = await chatModel.findOne({
       members: [firstId, secondId],
     });
-    if (chat) return res.json(chat);
+    if (chatA) return res.json(chatA);
+
+    const chatB = await chatModel.findOne({
+      members: [secondId, firstId],
+    });
+
+    if (chatB) return res.json(chatB);
 
     const newChat = new chatModel({
       members: [firstId, secondId],

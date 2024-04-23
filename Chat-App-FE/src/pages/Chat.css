@@ -1,8 +1,16 @@
 /* App.css */
 
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 .app {
   position: relative;
-  background-color:#94aad6;
+  background-color: #94aad6;
+  min-height: 100vh;
+  display: flex;
 }
 
 .user-info {
@@ -26,13 +34,8 @@ form {
   margin-top: 400px;
 }
 
-.selected {
-  background-color: blue;
-}
-
 .col-4 {
-  flex: 0 0 auto;
-  width: 33.3333333333%;
+  flex: 0 0 calc((100% - 400px) / 3); 
   padding-top: 20px;
 }
 
@@ -59,19 +62,6 @@ form {
   cursor: pointer;
 }
 
-.list-group {
-  margin-top: 20px;
-}
-
-.list-group-item {
-  cursor: pointer;
-}
-
-.list-group-item.active {
-  background-color: #007bff;
-  color: #fff;
-}
-
 .found-user-info {
   display: flex;
   flex-direction: column;
@@ -85,22 +75,75 @@ form {
   margin-right: 10px;
 }
 
-.search-list-container {
-  flex-grow: 1;
+.list-group-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.list-group {
+  height: calc(100vh - 200px); 
+  max-height: calc(100vh - 200px); 
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.list-group-item {
+  cursor: pointer;
+  display: block;
+  padding: 5px 10px;
+  margin-bottom: 5px;
+}
+
+.list-group-item.active {
+  background-color: #007bff;
+  color: #fff;
 }
 
 .list-group-container {
-  max-height: 300px; /* Đặt chiều cao tối đa của container */
-  overflow-y: auto; /* Kiểm soát cuộn trang nếu nội dung vượt quá kích thước của container */
+  max-height: 300px; 
+  overflow-y: auto; 
 }
 
 .list-group-scroll {
-  overflow-y: auto; /* Kiểm soát cuộn trang nếu có quá nhiều người trong danh sách */
+  overflow-y: auto; 
 }
 /* ------------------------------------ */
 
 .chat-box {
+  flex: 1;
   height: calc(100vh - 200px); 
   max-height: calc(100vh - 200px); 
   overflow-y: auto; 
+}
+
+.message {
+  margin-bottom: 10px;
+}
+
+.message.right {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.message.left {
+  display: flex;
+  flex-direction: row;
+}
+
+.message.right .content {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-left: 10px; 
+}
+
+.message.left .content {
+  background-color: #f1f1f1;
+  color: #333;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-right: 10px; 
 }
