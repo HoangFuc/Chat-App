@@ -214,7 +214,7 @@ function App() {
                       variant="outline-secondary"
                       onClick={handleFindUser}
                     >
-                      FindsetFoundUser
+                      Find
                     </Button>
                   </div>
                   <div className="list-group-container">
