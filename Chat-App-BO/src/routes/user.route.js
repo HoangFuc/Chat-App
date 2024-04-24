@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require("../app/controllers/userController");
+const authorController = require("../../../Chat-App-BE/controllers/authController");
 
 //Create
 router.get('/create', userController.create);
