@@ -225,8 +225,8 @@ function App() {
                       {userList.map((user) => (
                         <ListGroup.Item
                           key={user.id}
-                          active={selectedUser && selectedUser.id === user.id}
                           onClick={() => handleSelectedUser(user)}
+                          className={selectedUser === user ? "selected" : ""}
                         >
                           {user.username}
                         </ListGroup.Item>
@@ -238,7 +238,7 @@ function App() {
             </Card>
           </Col>
           <Col md={8}>
-            {/*   */}
+            {/* Right section */}
             {isChatVisible && selectedUser && (
               <Card>
                 <Card.Header className="bg-primary text-white">
