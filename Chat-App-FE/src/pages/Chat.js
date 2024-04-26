@@ -31,7 +31,6 @@ function App() {
   const [socket, setSocket] = useState(null);
   const [onlineUser, setOnlineUser] = useState([]);
 
-  console.log("============onlineUser", onlineUser);
   useEffect(() => {
     const newSocket = io("http://localhost:2304");
     setSocket(newSocket);
@@ -47,15 +46,6 @@ function App() {
       socket.off("getOnlineUsers");
     };
   }, [socket]);
-
-  //send message
-  useEffect(() => {
-    if (socket === null) return;
-    const chatMember = foundUser._id;
-    socket.emit("sendMessage", { ...messageContent, chatMember });
-  }, [messageContent]);
-
-  // receive message
 
   const fetchUsers = async () => {
     try {
@@ -92,7 +82,6 @@ function App() {
         firstId: users._id,
         secondId: foundUser._id,
       });
-      console.log("=======res", response);
       if (response && response.data._id) {
         setChatId(response.data._id);
         setIsChatVisible(true);
@@ -126,6 +115,8 @@ function App() {
   };
 
   const handleSendMessage = async () => {
+    if (socket === null) return;
+    const chatMember = foundUser._id;
     const message = {
       chatId: chatId,
       senderId: selectedUser._id,
@@ -134,9 +125,10 @@ function App() {
     try {
       const data = await axios.post("/api/createMessage", message);
       if (data) {
-        setChatContent((prev) => [...prev, data.data]);
+        chatContent.push(data.data);
         handleGetMessage(message.chatId);
         setMessageContent("");
+        socket.emit("sendMessage", { chatContent, chatMember });
       } else console.log("====================err at send message");
     } catch (err) {
       console.log(err);
@@ -147,6 +139,13 @@ function App() {
     handleGetMessage();
   }, [users]);
 
+  // receive message
+  useEffect(() => {
+    if (socket === null) return;
+    socket.on("getMessage", (res) => {
+      setChatContent(res);
+    });
+  }, [socket]);
   return (
     <div className="app">
       <Container>

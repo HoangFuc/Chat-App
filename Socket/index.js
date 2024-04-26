@@ -15,7 +15,6 @@ io.on("connection", (socket) => {
       })
     );
   });
-  console.log("================newOnlineUser", onlineUser);
 
   io.emit("getOnlineUsers", onlineUser);
 
@@ -23,20 +22,15 @@ io.on("connection", (socket) => {
     onlineUser = onlineUser.filter((user) =>
       console.log(user.socketId == socket.id)
     );
-    console.log("==============onlineUseasdasdasdr", reason);
     io.emit("getOnlineUsers", onlineUser);
   });
 
-  //add message
-  // socket.on("sendMessage", (message) => {
-  //   const user = onlineUser.find((user) => user.userId === message.chatMember);
-
-  //   if (user) {
-  //     io.to(user.socketId).emit("getMessage", message);
-  //   }
-  // });
+  // add message
   socket.on("sendMessage", (message) => {
-    io.to(message.chatMember).emit("getMessage", message.messageContent);
+    const user = onlineUser.find((user) => user.userId === message.chatMember);
+    if (user) {
+      io.to(user.socketId).emit("getMessage", message.chatContent);
+    }
   });
 });
 
