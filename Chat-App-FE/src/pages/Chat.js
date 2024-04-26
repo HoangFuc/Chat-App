@@ -52,8 +52,11 @@ function App() {
       const listAccountResponse = await axios.get("/api/listAccount");
       const userResponse = await axios.get(`/api/${id}`);
       setUsers(userResponse.data);
-
-      setUserList(listAccountResponse.data);
+      const { data } = listAccountResponse;
+      const listUser = data.filter((user) => {
+        return user._id !== id;
+      });
+      setUserList(listUser);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -146,6 +149,7 @@ function App() {
       setChatContent(res);
     });
   }, [socket]);
+
   return (
     <div className="app">
       <Container>
