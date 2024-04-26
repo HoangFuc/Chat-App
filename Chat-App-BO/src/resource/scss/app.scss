@@ -6,3 +6,41 @@
 .test{
     background-color: red;
 }
+.btn-list{
+    margin-right: 12px;
+}
+
+.btn-list:hover{
+    cursor: pointer;
+    background-color: lightblue;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+.notification { 
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffedee;
+    border: 1px solid #f5c6cb;
+    font-size: large;
+    border-radius: 4px;
+    text-align: center;
+  }
+  .notification h2 {
+    color: red;
+  }
+
+  .notification p{
+    color:$error-color;
+    font-weight: 2rem;
+    line-height:5rem;
+  }
+
+  #admin-logo{
+    color: $white-text;
+    font-size: 1.8rem;
+    font-weight: 600;
+    background-color: #0088ff;
+    border: 1px solid beige;
+    border-radius: 8px;
+    padding: 20px;
+  }

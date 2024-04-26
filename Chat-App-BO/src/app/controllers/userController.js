@@ -4,6 +4,8 @@ const { mongooseToObject } = require('../../util/mongoose');
 const bodyParser = require('body-parser');
 const urlencodeParser = bodyParser.urlencoded({ extended: false });
 const bcrypt = require('bcrypt');
+const generateString = require('../helper/generateString');
+
 
 class UserController {
   //[GET] /users
@@ -28,25 +30,28 @@ class UserController {
   }
   //[[POST]]/api/userList/store
   async store(req, res, next) {
+    const { password, isAdmin, email } = req.body;
     try {
-      const { email, password, isAdmin, username, code } = req.body;
-
-      // Mã hóa mật khẩu
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Tạo đối tượng người dùng với thông tin từ req.body
-      const user = new User({
-        email,
-        password: hashedPassword,
-        isAdmin,
-        username,
-        code
+      const checkEmail = await User.findOne({
+        email: email,
       });
-
-      // Lưu đối tượng người dùng vào cơ sở dữ liệu
-      await user.save();
-
-      res.redirect('/api/userList');
+      if (checkEmail) {
+        return res.render('users/failed');
+      } else {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({
+          email: email,
+          password: hashedPassword,
+          isAdmin: isAdmin,
+          code: generateString(6),
+          username: `user${generateString(4)}`,
+        });
+        const data = await User.create(newUser);
+        return data
+          ? res.redirect('/api/userList')
+          : res.status(500).json("Create fail")
+      }
     } catch (error) {
       next(error);
     }
@@ -65,8 +70,14 @@ class UserController {
   //[[PUT]]/api/userList/:id
   async update(req, res, next) {
     try {
-      const users = await User.updateOne({ _id: req.params.id }, req.body);
-      // res.locals.successMessage = 'Update thành công.';
+      const { password, ...updateData } = req.body;
+
+      if (password) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        updateData.password = hashedPassword;
+      }
+
+      const users = await User.updateOne({ _id: req.params.id }, updateData);
       res.redirect('/api/userList');
     } catch (error) {
       next(error);

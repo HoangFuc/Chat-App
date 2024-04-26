@@ -3,6 +3,7 @@ const { engine } = require('express-handlebars');
 const path = require('path');
 const morgan = require('morgan');
 const formatDate = require('../src/app/helper/formatDate');
+const generateString = require('../src/app/helper/generateString');
 const methodOverride = require('method-override');
 const session = require('express-session');
 const route = require('./routes');
@@ -37,6 +38,7 @@ app.engine(
         extname: '.hbs',
         helpers: {
             formatDate: formatDate,
+            generateString: generateString,
             sum: (a, b) => a + b
         }
     }),
