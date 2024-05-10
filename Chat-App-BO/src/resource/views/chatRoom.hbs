@@ -1,33 +1,31 @@
-<div class="container">
-    <div class="mt-4">
-        <table class="table table-striped" id="chatRoom-table">
-            <thead class="">
-                <tr class="">
-                    <th scope="col">#</th>
-                    <th scope="col">ID</th>
-                    <th scope="col">Members</th>
-                    <th scope="col">Create At</th>
-                    <th scope="col">Update At</th>
-                    <th scope="col" class="text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each chatRooms}}
-                <tr>
-                    <td>{{sum @index 1}}</td>
-                    <td>{{this._id}}</td>
-                    <td>{{this.members}}</td>
-                    <td>{{formatDate this.createdAt}}</td>
-                    <td>{{formatDate this.updatedAt}}</td>
-                    <td>
-                        <a type="button" class="btn btn-outline-danger btn-link" data-toggle="modal"
-                            data-target="#delete-chatRoom-modal" data-id="{{this._id}}">Delete</a>
-                    </td>
-                </tr>
-                {{/each}}
-            </tbody>
-        </table>
-    </div>
+<div class="m-4">
+    <table class="table table-striped" id="chatRoom-table">
+        <thead class="table-header">
+            <tr class="">
+                <th scope="col">#</th>
+                <th scope="col">ID</th>
+                <th scope="col">Members</th>
+                <th scope="col">Create At</th>
+                <th scope="col">Update At</th>
+                <th scope="col" class="text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each chatRooms}}
+            <tr>
+                <td>{{sum @index 1}}</td>
+                <td>{{this._id}}</td>
+                <td>{{this.members}}</td>
+                <td>{{formatDate this.createdAt}}</td>
+                <td>{{formatDate this.updatedAt}}</td>
+                <td>
+                    <a type="button" class="btn btn-outline-danger btn-link" data-toggle="modal"
+                        data-target="#delete-chatRoom-modal" data-id="{{this._id}}">Delete</a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
 </div>
 {{!--DELETE FORM HIDENED--}}
 <form name="name-delete-chatRoom-form" method="POST"></form>
@@ -64,7 +62,7 @@
         })
 
         vBtnDeleteChatRoom.click(function () {
-            vDeleteForm.action = '/api/chatRoomList/' + vChatRoomId +'?_method=DELETE';
+            vDeleteForm.action = '/api/chatRoomList/' + vChatRoomId + '?_method=DELETE';
             vDeleteForm.submit();
         });
     })
