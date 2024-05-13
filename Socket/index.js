@@ -15,7 +15,8 @@ io.on("connection", (socket) => {
       })
     );
   });
-  console.log("================ newOnlineUser", onlineUser);
+
+  console.log('================ newOnlineUser', onlineUser);
 
   io.emit("getOnlineUser", onlineUser);
 
@@ -45,3 +46,4 @@ io.on("connection", (socket) => {
 });
 
 io.listen(2304);
+
