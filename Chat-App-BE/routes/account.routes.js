@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
 const {
@@ -6,11 +6,11 @@ const {
   editName,
   findUser,
   findUserById,
-} = require("../controllers/accountController");
+} = require('../controllers/accountController');
 
-router.get("/listAccount", listAccount); //danh sach account
-router.post("/:id/editName", editName);
-router.post("/find", findUser);
-router.get("/:id", findUserById);
+router.get('/listAccount', listAccount); //danh sach account
+router.post('/:id/editName', editName);
+router.post('/find', findUser);
+router.get('/:id', findUserById);
 
 module.exports = router;

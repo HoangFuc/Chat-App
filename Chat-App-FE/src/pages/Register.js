@@ -1,43 +1,14 @@
-import { useState } from 'react';
+import { useContext } from 'react';
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
+
 import { Helmet } from 'react-helmet';
+import { AuthContext } from '../context/AuthContext';
 export default function Register() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const navigate = useNavigate();
+  const { registerInfo, updateRegisterInfo, registerUser, isRegisterLoading } =
+    useContext(AuthContext);
 
-  // const [isShowPassword, setIsShowPassword] = useState(false);
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // if (password !== confirmPassword) {
-    //   // Mật khẩu không khớp, yêu cầu người dùng nhập lại
-    //   alert('Mật khẩu không khớp. Vui lòng nhập lại.');
-    //   setPassword('');
-    //   setConfirmPassword('');
-    //   return;
-    // }
-
-    try {
-      const response = await axios.post('/api/signup', {
-        email,
-        password,
-      });
-      if (response) {
-        toast.success('Đăng ký thành công');
-        setTimeout(() => {
-          navigate('/');
-        }, 3000);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
   return (
     <div>
       <Helmet>
@@ -46,14 +17,15 @@ export default function Register() {
       <div className="container-register">
         <div className="register">
           <div className="title">Register</div>
-          <Form>
+          <Form onSubmit={registerUser}>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Email address</Form.Label>
               <Form.Control
                 type="email"
                 placeholder="Enter email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) =>
+                  updateRegisterInfo({ ...registerInfo, email: e.target.value })
+                }
               />
             </Form.Group>
 
@@ -62,21 +34,29 @@ export default function Register() {
               <Form.Control
                 type="password"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) =>
+                  updateRegisterInfo({
+                    ...registerInfo,
+                    password: e.target.value,
+                  })
+                }
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Group className="mb-3" controlId="formBasicConfirmPassword">
               <Form.Label>Confirm Password</Form.Label>
               <Form.Control
                 type="password"
                 placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={(e) =>
+                  updateRegisterInfo({
+                    ...registerInfo,
+                    confirmPassword: e.target.value,
+                  })
+                }
               />
             </Form.Group>
-            <Button variant="primary" type="submit" onClick={handleSubmit}>
-              Register
+            <Button variant="primary" type="submit">
+              {isRegisterLoading ? 'Creating your account' : 'Register'}
             </Button>
           </Form>
 
@@ -86,11 +66,6 @@ export default function Register() {
           </div>
         </div>
       </div>
-      <ToastContainer
-        position="bottom-center"
-        limit={1}
-        style={{ width: '500px' }}
-      />
     </div>
   );
 }

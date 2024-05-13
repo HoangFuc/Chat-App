@@ -1,4 +1,4 @@
-const messageModel = require("../models/message");
+const messageModel = require('../models/message');
 
 //create Message
 
@@ -13,9 +13,10 @@ exports.createMessage = async (req, res) => {
 
   try {
     const response = await message.save();
+
     res.status(200).json(response);
   } catch (err) {
-    console.log("=======err", err);
+    console.log('=======err', err);
     res.status(500).json(err);
   }
 };
@@ -24,13 +25,15 @@ exports.createMessage = async (req, res) => {
 
 exports.getMessage = async (req, res) => {
   const { chatId } = req.body;
-  console.log("=============chatId", chatId);
+  // const { chatId } = req.params;
+
+  console.log('=============chatId', chatId);
   try {
     const message = await messageModel.find({ chatId });
-    console.log("===============message", message);
+    console.log('===============message', message);
     res.status(200).json(message);
   } catch (err) {
-    console.log("==================err", err);
+    console.log('==================err', err);
     res.status(500).json(err);
   }
 };

@@ -1,10 +1,11 @@
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { Helmet } from 'react-helmet';
 import { React, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { baseUrl } from '../utils/services';
 
 export default function ResetPassword() {
   const [showReset, setShowReset] = useState(true);
@@ -20,15 +21,13 @@ export default function ResetPassword() {
       toast.error('Vui lòng nhập email !!!');
     } else {
       try {
-        {
-          const send = await axios.post('/api/sendEmail', { email });
-          console.log(send);
-          if (send) {
-            toast.success('Vui lòng kiểm tra email !!!');
-            setTimeout(() => {
-              setShowReset(!showReset);
-            }, 4000);
-          }
+        const send = await axios.post(`${baseUrl}/sendEmail`, { email });
+        console.log(send);
+        if (send) {
+          toast.success('Vui lòng kiểm tra email !!!');
+          setTimeout(() => {
+            setShowReset(!showReset);
+          }, 2500);
         }
       } catch (err) {
         toast.error('Email không tồn tại !!!');
@@ -38,7 +37,7 @@ export default function ResetPassword() {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     try {
-      const reset = await axios.post('/api/resetPassword', {
+      const reset = await axios.post(`${baseUrl}/resetPassword`, {
         email,
         code,
         newPassword,
@@ -49,7 +48,7 @@ export default function ResetPassword() {
         toast.success('Thay đổi mật khẩu thành công');
         setTimeout(() => {
           navigate('/');
-        }, 3000);
+        }, 2500);
       }
     } catch (error) {
       toast.error('Bạn đã nhập sai gì đó !!! ');
@@ -58,7 +57,6 @@ export default function ResetPassword() {
 
   return (
     <div>
-      {' '}
       <Helmet>
         <title>Reset Password</title>
       </Helmet>
@@ -121,11 +119,6 @@ export default function ResetPassword() {
           )}
         </div>
       </div>
-      <ToastContainer
-        position="bottom-center"
-        limit={1}
-        style={{ width: '500px' }}
-      />
     </div>
   );
 }
