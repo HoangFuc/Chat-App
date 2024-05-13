@@ -15,14 +15,10 @@ io.on('connection', (socket) => {
       })
     );
   });
-<<<<<<< tutra
   console.log('================ newOnlineUser', onlineUser);
-=======
->>>>>>> dev
 
   io.emit('getOnlineUser', onlineUser);
 
-<<<<<<< tutra
   //add message
   socket.on('sendMessage', (message) => {
     const user = onlineUser.find((user) => user.userId === message.recipientId);
@@ -46,22 +42,7 @@ io.on('connection', (socket) => {
   // socket.on('sendMessage', (message) => {
   //   io.to(message.chatMember).emit('getMessage', message.messageContent);
   // });
-=======
-  socket.on("disconnect", (reason) => {
-    onlineUser = onlineUser.filter((user) =>
-      console.log(user.socketId == socket.id)
-    );
-    io.emit("getOnlineUsers", onlineUser);
-  });
-
-  // add message
-  socket.on("sendMessage", (message) => {
-    const user = onlineUser.find((user) => user.userId === message.chatMember);
-    if (user) {
-      io.to(user.socketId).emit("getMessage", message.chatContent);
-    }
-  });
->>>>>>> dev
 });
 
 io.listen(2304);
+
