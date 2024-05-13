@@ -1,7 +1,7 @@
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { useState, useContext } from 'react';
 import '../css/SideNavLeftCss.css';
-import ava from '../components/defaultava.png';
+// import ava from '../components/defaultava.png';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Container, Stack } from 'react-bootstrap';
@@ -79,7 +79,7 @@ export default function ChatTest() {
               onClick={handleSidenavSpaceClick}
             ></div>
             <div className={showNav ? 'sidenav active' : 'sidenav'}>
-              <img src={ava} alt="Avatar" className="avatar" />
+              <img src="" alt="Avatar" className="avatar" />
               <div> {user.username}</div>
 
               <ul>
