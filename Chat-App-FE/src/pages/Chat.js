@@ -31,7 +31,6 @@ function App() {
   const [socket, setSocket] = useState(null);
   const [onlineUser, setOnlineUser] = useState([]);
 
-  console.log("============onlineUser", onlineUser);
   useEffect(() => {
     const newSocket = io("http://localhost:2304");
     setSocket(newSocket);
@@ -48,22 +47,16 @@ function App() {
     };
   }, [socket]);
 
-  //send message
-  useEffect(() => {
-    if (socket === null) return;
-    const chatMember = foundUser._id;
-    socket.emit("sendMessage", { ...messageContent, chatMember });
-  }, [messageContent]);
-
-  // receive message
-
   const fetchUsers = async () => {
     try {
       const listAccountResponse = await axios.get("/api/listAccount");
       const userResponse = await axios.get(`/api/${id}`);
       setUsers(userResponse.data);
-
-      setUserList(listAccountResponse.data);
+      const { data } = listAccountResponse;
+      const listUser = data.filter((user) => {
+        return user._id !== id;
+      });
+      setUserList(listUser);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -92,7 +85,6 @@ function App() {
         firstId: users._id,
         secondId: foundUser._id,
       });
-      console.log("=======res", response);
       if (response && response.data._id) {
         setChatId(response.data._id);
         setIsChatVisible(true);
@@ -126,6 +118,8 @@ function App() {
   };
 
   const handleSendMessage = async () => {
+    if (socket === null) return;
+    const chatMember = foundUser._id;
     const message = {
       chatId: chatId,
       senderId: selectedUser._id,
@@ -134,9 +128,10 @@ function App() {
     try {
       const data = await axios.post("/api/createMessage", message);
       if (data) {
-        setChatContent((prev) => [...prev, data.data]);
+        chatContent.push(data.data);
         handleGetMessage(message.chatId);
         setMessageContent("");
+        socket.emit("sendMessage", { chatContent, chatMember });
       } else console.log("====================err at send message");
     } catch (err) {
       console.log(err);
@@ -146,6 +141,14 @@ function App() {
   useEffect(() => {
     handleGetMessage();
   }, [users]);
+
+  // receive message
+  useEffect(() => {
+    if (socket === null) return;
+    socket.on("getMessage", (res) => {
+      setChatContent(res);
+    });
+  }, [socket]);
 
   return (
     <div className="app">
@@ -222,8 +225,8 @@ function App() {
                       {userList.map((user) => (
                         <ListGroup.Item
                           key={user.id}
-                          active={selectedUser && selectedUser.id === user.id}
                           onClick={() => handleSelectedUser(user)}
+                          className={selectedUser === user ? "selected" : ""}
                         >
                           {user.username}
                         </ListGroup.Item>
@@ -235,7 +238,7 @@ function App() {
             </Card>
           </Col>
           <Col md={8}>
-            {/*   */}
+            {/* Right section */}
             {isChatVisible && selectedUser && (
               <Card>
                 <Card.Header className="bg-primary text-white">
