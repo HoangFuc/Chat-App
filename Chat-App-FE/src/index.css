@@ -36,6 +36,7 @@ code {
   }
   Button {
     width: 450px;
+    margin-bottom: 20px;
   }
   a {
     font-size: small;

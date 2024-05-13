@@ -46,7 +46,7 @@ exports.signup = async (req, res) => {
 };
 
 exports.signin = async (req, res) => {
-  console.log('===[SIGNUP]');
+  console.log('===[SIGNIN]');
   const { email, password } = req.body;
   try {
     const data = await userModel.findOne({

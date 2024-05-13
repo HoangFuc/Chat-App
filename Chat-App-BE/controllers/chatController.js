@@ -1,4 +1,4 @@
-const chatModel = require("../models/chatRoom");
+const chatModel = require('../models/chatRoom');
 
 exports.createChat = async (req, res) => {
   const { firstId, secondId } = req.body;
@@ -23,30 +23,31 @@ exports.createChat = async (req, res) => {
 
     res.status(200).json(response);
   } catch (err) {
-    console.log("=========[ERR CreateChat] : ", err);
+    console.log('=========[ERR CreateChat] : ', err);
     res.status(500).json(err);
   }
 };
 
 exports.findUserChat = async (req, res) => {
   const userId = req.params.userId;
-  console.log("===================userId", userId);
+  console.log('===================userId', userId);
   try {
     const chat = await chatModel.find({
       members: { $in: [userId] },
     });
 
-    console.log("=================chat", chat);
+    console.log('=================chat', chat);
 
     res.status(200).json(chat);
   } catch (err) {
-    console.log("======[ERR FindUserChat] :", err);
+    console.log('======[ERR FindUserChat] :', err);
     res.status(500).json(err);
   }
 };
 
 exports.findChat = async (req, res) => {
   const { firstId, secondId } = req.params;
+
   try {
     const chat = await chatModel.find({
       members: { $all: [firstId, secondId] },
@@ -54,7 +55,7 @@ exports.findChat = async (req, res) => {
 
     res.status(200).json(chat);
   } catch (err) {
-    console.log("=====[ERR FindChat]: ", err);
+    console.log('=====[ERR FindChat]: ', err);
     res.status(500).json(err);
   }
 };
